@@ -2,25 +2,14 @@ import qs from 'qs'
 
 const BASE_PATH = 'https://itunes.apple.com/search'
 
-export type Media =
-  | 'movie'
-  | 'music'
-  | 'podcast'
-  | 'music'
-  | 'musicVideo'
-  | 'audiobook'
-  | 'shortFilm'
-  | 'tvShow'
-  | 'software'
-  | 'ebook'
-  | 'all'
+export type Media = 'movie' | 'music' | 'podcast' | 'music' | 'musicVideo' | 'audiobook' | 'shortFilm' | 'tvShow' | 'software' | 'ebook' | 'all'
 
 export type Entity = {
   movie: 'movieArtist' | 'movie'
   podcast: 'podcastAuthor' | 'podcast'
   music: 'musicArtist' | 'musicTrack' | 'album' | 'musicVideo' | 'mix' | 'song'
   musicVideo: 'musicArtist' | 'musicVideo'
-  audiobook: 'audiobookAuthor'| 'audiobook'
+  audiobook: 'audiobookAuthor' | 'audiobook'
   shortFilm: 'shortFilmArtist' | 'shortFilm'
   tvShow: 'tvEpisode' | 'tvSeason'
   software: 'software' | 'iPadSoftware' | 'macSoftware'
@@ -29,7 +18,20 @@ export type Entity = {
 }
 
 export type Attribute = {
-  movie: 'actorTerm' | 'genreIndex' | 'artistTerm' | 'shortFilmTerm' | 'producerTerm' | 'ratingTerm' | 'directorTerm' | 'releaseYearTerm' | 'featureFilmTerm' | 'movieArtistTerm' | 'movieTerm' | 'ratingIndex'|'descriptionTerm'
+  movie:
+    | 'actorTerm'
+    | 'genreIndex'
+    | 'artistTerm'
+    | 'shortFilmTerm'
+    | 'producerTerm'
+    | 'ratingTerm'
+    | 'directorTerm'
+    | 'releaseYearTerm'
+    | 'featureFilmTerm'
+    | 'movieArtistTerm'
+    | 'movieTerm'
+    | 'ratingIndex'
+    | 'descriptionTerm'
   podcast: 'titleTerm' | 'languageTerm' | 'authorTerm' | 'genreIndex' | 'artistTerm' | 'ratingIndex' | 'keywordsTerm' | 'descriptionTerm'
   music: 'mixTerm' | 'genreIndex' | 'artistTerm' | 'composerTerm' | 'albumTerm' | 'ratingIndex' | 'songTerm'
   musicVideo: 'genreIndex' | 'artistTerm' | 'albumTerm' | 'ratingIndex' | 'songTerm'
@@ -37,9 +39,36 @@ export type Attribute = {
   shortFilm: 'genreIndex' | 'artistTerm' | 'shortFilmTerm' | 'ratingIndex' | 'descriptionTerm'
   tvShow: 'genreIndex' | 'tvEpisodeTerm' | 'showTerm' | 'tvSeasonTerm' | 'ratingIndex' | 'descriptionTerm'
   software: 'softwareDeveloper'
-  all: 'actorTerm' | 'languageTerm' | 'allArtistTerm' | 'tvEpisodeTerm' | 'shortFilmTerm' | 'directorTerm' | 'releaseYearTerm' | 'titleTerm' | 'featureFilmTerm' | 'ratingIndex' | 'keywordsTerm' | 'descriptionTerm' | 'authorTerm' | 'genreIndex' | 'mixTerm' | 'allTrackTerm' | 'artistTerm' | 'composerTerm' | 'tvSeasonTerm' | 'producerTerm' | 'ratingTerm' | 'songTerm' | 'movieArtistTerm' | 'showTerm' | 'movieTerm' | 'albumTerm'
+  all:
+    | 'actorTerm'
+    | 'languageTerm'
+    | 'allArtistTerm'
+    | 'tvEpisodeTerm'
+    | 'shortFilmTerm'
+    | 'directorTerm'
+    | 'releaseYearTerm'
+    | 'titleTerm'
+    | 'featureFilmTerm'
+    | 'ratingIndex'
+    | 'keywordsTerm'
+    | 'descriptionTerm'
+    | 'authorTerm'
+    | 'genreIndex'
+    | 'mixTerm'
+    | 'allTrackTerm'
+    | 'artistTerm'
+    | 'composerTerm'
+    | 'tvSeasonTerm'
+    | 'producerTerm'
+    | 'ratingTerm'
+    | 'songTerm'
+    | 'movieArtistTerm'
+    | 'showTerm'
+    | 'movieTerm'
+    | 'albumTerm'
 }
 
+/* eslint-disable */
 export type ReturnEntity<MediaType> =
   MediaType extends 'movie' ? Entity['movie'] :
   MediaType extends 'podcast' ? Entity['podcast'] :
@@ -64,6 +93,7 @@ export type ReturnAttribute<MediaType> =
   MediaType extends 'software' ? Attribute['software'] :
   MediaType extends 'all' ? Attribute['all'] :
   never
+/* eslint-enable */
 
 export type Params<MediaType> = {
   entity?: ReturnEntity<MediaType>
@@ -76,14 +106,18 @@ export type Params<MediaType> = {
 }
 
 class ItunseClient<MediaType> {
-  constructor(private params: Params<MediaType>) {}
+  private params: Params<MediaType>
+
+  constructor(params: Params<MediaType>) {
+    this.params = params
+  }
 
   getParams = (): Params<MediaType> => {
     return { ...this.params }
   }
 
   getPath = (): string => {
-    const queries = qs.stringify(this.getParams())
+    const queries = qs.stringify(this.params)
     return `${BASE_PATH}?${queries}`
   }
 
@@ -100,7 +134,7 @@ class ItunseClient<MediaType> {
   }
 
   send = (options?: Request): Promise<Response> => {
-    return fetch(new Request(this.getPath(), { ...options, method: 'GET' }))
+    return fetch(this.getPath(), { ...options, method: 'GET' })
   }
 
   private create = <Key extends keyof Params<MediaType>>(key: Key, value: Params<MediaType>[Key]) => {
@@ -122,9 +156,9 @@ export default function itunseSearch(term: string, options: Options = {}) {
       params['media'] = value
       params['limit'] = options.limit || 10
       params['lang'] = options.lang || 'en_us'
-      params['country'] = options.country || 'en'
-    
+      params['country'] = options.country || 'us'
+
       return new ItunseClient(params)
-    }
+    },
   }
 }

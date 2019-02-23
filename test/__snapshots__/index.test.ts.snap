@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`itunse-search-client #getPath should return correct path 1`] = `"https://itunes.apple.com/search?term=foo&media=movie&limit=10&lang=en_us&country=us"`;
+
+exports[`itunse-search-client #getPath should return correct path 2`] = `"https://itunes.apple.com/search?term=foo&media=movie&limit=10&lang=en_us&country=us&entity=movieArtist"`;
+
+exports[`itunse-search-client #getPath should return correct path 3`] = `"https://itunes.apple.com/search?term=foo&media=movie&limit=10&lang=en_us&country=us&entity=movieArtist&attribute=movieTerm"`;
+
+exports[`itunse-search-client #getPath should return correct path 4`] = `"https://itunes.apple.com/search?term=foo&media=movie&limit=30&lang=en_us&country=us&entity=movieArtist&attribute=movieTerm"`;
+
+exports[`itunse-search-client #getPath should return correct path 5`] = `"https://itunes.apple.com/search?term=foo&media=movie&limit=30&lang=ja_jp&country=jp&entity=movieArtist&attribute=movieTerm"`;

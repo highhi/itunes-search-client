@@ -2,19 +2,29 @@
   "name": "itunse-search-client",
   "version": "0.0.1",
   "description": "",
-  "main": "lib",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "start": "tsc -w",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint --fix ./src/**/*.ts"
   },
   "author": "highhi <highhi9999@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^24.0.6",
     "@types/node": "^11.9.4",
+    "@types/node-fetch": "^2.1.6",
     "@types/qs": "^6.5.1",
+    "@typescript-eslint/eslint-plugin": "^1.4.0",
+    "@typescript-eslint/parser": "^1.4.0",
+    "eslint": "^5.14.1",
+    "eslint-config-prettier": "^4.0.0",
+    "eslint-plugin-prettier": "^3.0.1",
     "isomorphic-unfetch": "^3.0.0",
     "jest": "^24.1.0",
+    "node-fetch": "^2.3.0",
+    "prettier": "^1.16.4",
     "ts-jest": "^24.0.0",
     "typescript": "^3.3.3"
   },
