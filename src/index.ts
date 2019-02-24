@@ -2,7 +2,7 @@ import qs from 'qs'
 
 const BASE_PATH = 'https://itunes.apple.com/search'
 
-export type Media = 'movie' | 'music' | 'podcast' | 'music' | 'musicVideo' | 'audiobook' | 'shortFilm' | 'tvShow' | 'software' | 'ebook' | 'all'
+export type Media = 'movie' | 'music' | 'podcast' | 'musicVideo' | 'audiobook' | 'shortFilm' | 'tvShow' | 'software' | 'ebook' | 'all'
 
 export type Entity = {
   movie: 'movieArtist' | 'movie'
