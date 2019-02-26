@@ -1,16 +1,25 @@
 {
-  "name": "itunse-search-client",
+  "name": "itunes-search-client",
   "version": "0.0.1",
-  "description": "",
+  "description": "client for itunse search api.",
   "main": "lib/index.js",
+  "author": "highhi",
+  "license": "MIT",
+  "repository": "highhi/itunes-search-client",
+  "homepage": "https://github.com/highhi/itunes-search-client",
   "types": "lib/index.d.ts",
+  "keywords": [
+    "itunes search api",
+    "api",
+    "api client"
+  ],
   "scripts": {
     "start": "tsc -w",
+    "build": "tsc",
+    "prepublish": "npm run --if-present build",
     "test": "jest",
     "lint": "eslint --fix ./src/**/*.ts"
   },
-  "author": "highhi <highhi9999@gmail.com>",
-  "license": "MIT",
   "devDependencies": {
     "@types/jest": "^24.0.6",
     "@types/node": "^11.9.4",

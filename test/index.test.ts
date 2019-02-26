@@ -5,19 +5,21 @@ import isc, { Entity, Attribute } from '../src'
 // @ts-ignore
 global.fetch = jest.fn()
 
-describe('itunse-search-client', () => {
-  describe('#getPath', () => {
-    test('should return correct path', () => {
+describe('itunes-search-client', () => {
+  describe('#getUrl', () => {
+    test('should return correct url', () => {
       let path
-      path = isc('foo').media('movie').getPath()
+      path = isc('ふー').media('movie').getUrl()
       expect(path).toMatchSnapshot()
-      path = isc('foo').media('movie').entity('movieArtist').getPath()
+      path = isc('foo').media('movie').getUrl()
       expect(path).toMatchSnapshot()
-      path = isc('foo').media('movie').entity('movieArtist').attribute('movieTerm').getPath()
+      path = isc('foo').media('movie').entity('movieArtist').getUrl()
       expect(path).toMatchSnapshot()
-      path = isc('foo').media('movie').entity('movieArtist').attribute('movieTerm').limit(30).getPath()
+      path = isc('foo').media('movie').entity('movieArtist').attribute('movieTerm').getUrl()
       expect(path).toMatchSnapshot()
-      path = isc('foo', { lang: 'ja_jp', country: 'jp' }).media('movie').entity('movieArtist').attribute('movieTerm').limit(30).getPath()
+      path = isc('foo').media('movie').entity('movieArtist').attribute('movieTerm').limit(30).getUrl()
+      expect(path).toMatchSnapshot()
+      path = isc('foo', { lang: 'ja_jp', country: 'jp' }).media('movie').entity('movieArtist').attribute('movieTerm').limit(30).getUrl()
       expect(path).toMatchSnapshot()
     })
   })
