@@ -105,40 +105,49 @@ export type Params<MediaType> = {
   country: string
 }
 
-class ItunseClient<MediaType> {
+export type ItunesSearchClient<MediaType> = {
+  getParams(): Params<MediaType>
+  getUrl(): string
+  entity(value: ReturnEntity<MediaType>): ItunesSearchClient<MediaType>
+  attribute(value: ReturnAttribute<MediaType>): ItunesSearchClient<MediaType>
+  limit(value: number): ItunesSearchClient<MediaType>
+  send(options?: Request): Promise<Response>
+}
+
+class Client<MediaType> implements ItunesSearchClient<MediaType> {
   private params: Params<MediaType>
 
   constructor(params: Params<MediaType>) {
     this.params = params
   }
 
-  getParams = (): Params<MediaType> => {
+  getParams = () => {
     return { ...this.params }
   }
 
-  getPath = (): string => {
+  getUrl = () => {
     const queries = qs.stringify(this.params)
     return `${BASE_PATH}?${queries}`
   }
 
-  entity = (value: ReturnEntity<MediaType>): ItunseClient<MediaType> => {
+  entity = (value: ReturnEntity<MediaType>) => {
     return this.create('entity', value)
   }
 
-  attribute = (value: ReturnAttribute<MediaType>): ItunseClient<MediaType> => {
+  attribute = (value: ReturnAttribute<MediaType>) => {
     return this.create('attribute', value)
   }
 
-  limit = (value: number): ItunseClient<MediaType> => {
+  limit = (value: number) => {
     return this.create('limit', value)
   }
 
-  send = (options?: Request): Promise<Response> => {
-    return fetch(this.getPath(), { ...options, method: 'GET' })
+  send = (options?: Request) => {
+    return fetch(this.getUrl(), { ...options, method: 'GET' })
   }
 
-  private create = <Key extends keyof Params<MediaType>>(key: Key, value: Params<MediaType>[Key]) => {
-    return new ItunseClient({ ...this.params, [key]: value })
+  private create = <Key extends keyof Params<MediaType>>(key: Key, value: Params<MediaType>[Key]): ItunesSearchClient<MediaType> => {
+    return new Client({ ...this.params, [key]: value })
   }
 }
 
@@ -148,9 +157,9 @@ type Options = {
   country?: string
 }
 
-export default function itunseSearch(term: string, options: Options = {}) {
+export default function itunesSearch(term: string, options: Options = {}) {
   return {
-    media<M extends Media>(value: M) {
+    media<M extends Media>(value: M): ItunesSearchClient<M> {
       const params: Params<M> = Object.create(null)
       params['term'] = term
       params['media'] = value
@@ -158,7 +167,7 @@ export default function itunseSearch(term: string, options: Options = {}) {
       params['lang'] = options.lang || 'en_us'
       params['country'] = options.country || 'us'
 
-      return new ItunseClient(params)
+      return new Client(params)
     },
   }
 }
