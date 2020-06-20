@@ -2,12 +2,14 @@
   "name": "itunes-search-client",
   "version": "0.0.1",
   "description": "client for itunse search api.",
-  "main": "lib/index.js",
+  "main": "lib/bundle.common.js",
+  "module": "lib/bundle.module.js",
   "author": "highhi",
   "license": "MIT",
   "repository": "highhi/itunes-search-client",
   "homepage": "https://github.com/highhi/itunes-search-client",
   "types": "lib/index.d.ts",
+  "sideEffects": false,
   "keywords": [
     "itunes search api",
     "api",
@@ -15,12 +17,14 @@
   ],
   "scripts": {
     "start": "tsc -w",
-    "build": "tsc",
+    "build": "rollup -c",
     "prepublish": "npm run --if-present build",
     "test": "jest",
     "lint": "eslint --fix ./src/**/*.ts"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^13.0.0",
+    "@rollup/plugin-node-resolve": "^8.0.1",
     "@types/jest": "^26.0.0",
     "@types/node": "^14.0.13",
     "@types/qs": "^6.5.1",
@@ -34,6 +38,9 @@
     "jest": "^26.0.1",
     "jest-fetch-mock": "^3.0.3",
     "prettier": "^2.0.5",
+    "rollup": "^2.17.1",
+    "rollup-plugin-terser": "^6.1.0",
+    "rollup-plugin-typescript2": "^0.27.1",
     "ts-jest": "^26.1.0",
     "typescript": "^3.3.3"
   },
