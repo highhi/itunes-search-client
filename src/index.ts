@@ -157,17 +157,27 @@ type Options = {
   country?: string
 }
 
-export default function itunesSearch(term: string, options: Options = {}) {
-  return {
-    media<M extends Media>(value: M): ItunesSearchClient<M> {
-      const params: Params<M> = Object.create(null)
-      params['term'] = term
-      params['media'] = value
-      params['limit'] = options.limit || 10
-      params['lang'] = options.lang || 'en_us'
-      params['country'] = options.country || 'us'
+class ItunesSearch {
+  private term = ''
+  private options: Options = {}
 
-      return new Client(params)
-    },
+  constructor(term: string, options: Options = {}) {
+    this.term = term
+    this.options = options
   }
+
+  media = <M extends Media>(value: M): ItunesSearchClient<M> => {
+    const params: Params<M> = Object.create(null)
+    params['term'] = this.term
+    params['media'] = value
+    params['limit'] = this.options.limit || 10
+    params['lang'] = this.options.lang || 'en_us'
+    params['country'] = this.options.country || 'us'
+
+    return new Client(params)
+  }
+}
+
+export default function itunesSearch(term: string, options: Options = {}): ItunesSearch {
+  return new ItunesSearch(term, options)
 }
