@@ -1,5 +1,3 @@
-import qs from 'qs'
-
 const BASE_PATH = 'https://itunes.apple.com/search'
 
 export type Media = 'movie' | 'music' | 'podcast' | 'musicVideo' | 'audiobook' | 'shortFilm' | 'tvShow' | 'software' | 'ebook' | 'all'
@@ -105,6 +103,16 @@ export type Params<MediaType> = {
   country: string
 }
 
+function qs(params: { [key: string]: any }): string {
+  return Object.keys(params)
+    .map((key) => {
+      const enkey = encodeURIComponent(key)
+      const envalue = encodeURIComponent(params[key])
+      return `${enkey}=${envalue}`
+    })
+    .join('&')
+}
+
 export type ItunesSearchClient<MediaType> = {
   getParams(): Params<MediaType>
   getUrl(): string
@@ -126,7 +134,7 @@ class Client<MediaType> implements ItunesSearchClient<MediaType> {
   }
 
   getUrl = () => {
-    const queries = qs.stringify(this.params)
+    const queries = qs(this.params)
     return `${BASE_PATH}?${queries}`
   }
 
