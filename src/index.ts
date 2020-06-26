@@ -64,38 +64,12 @@ export type Attribute = {
     | 'showTerm'
     | 'movieTerm'
     | 'albumTerm'
+  ebook: never
 }
 
-/* eslint-disable */
-export type ReturnEntity<MediaType> =
-  MediaType extends 'movie' ? Entity['movie'] :
-  MediaType extends 'podcast' ? Entity['podcast'] :
-  MediaType extends 'music' ? Entity['music'] :
-  MediaType extends 'musicVideo' ? Entity['musicVideo'] :
-  MediaType extends 'audiobook' ? Entity['audiobook'] :
-  MediaType extends 'shortFilm' ? Entity['shortFilm'] :
-  MediaType extends 'tvShow' ? Entity['tvShow'] :
-  MediaType extends 'software' ? Entity['software'] :
-  MediaType extends 'ebook' ? Entity['ebook'] :
-  MediaType extends 'all' ? Entity['all'] :
-  never
-
-export type ReturnAttribute<MediaType> =
-  MediaType extends 'movie' ? Attribute['movie'] :
-  MediaType extends 'podcast' ? Attribute['podcast'] :
-  MediaType extends 'music' ? Attribute['music'] :
-  MediaType extends 'musicVideo' ? Attribute['musicVideo'] :
-  MediaType extends 'audiobook' ? Attribute['audiobook'] :
-  MediaType extends 'shortFilm' ? Attribute['shortFilm'] :
-  MediaType extends 'tvShow' ? Attribute['tvShow'] :
-  MediaType extends 'software' ? Attribute['software'] :
-  MediaType extends 'all' ? Attribute['all'] :
-  never
-/* eslint-enable */
-
-export type Params<MediaType> = {
-  entity?: ReturnEntity<MediaType>
-  attribute?: ReturnAttribute<MediaType>
+export type Params<MediaType extends Media> = {
+  entity?: Entity[MediaType]
+  attribute?: Attribute[MediaType]
   media: Media
   limit: number
   term: string
@@ -113,16 +87,16 @@ function qs(params: { [key: string]: any }): string {
     .join('&')
 }
 
-export type ItunesSearchClient<MediaType> = {
+export type ItunesSearchClient<MediaType extends Media> = {
   getParams(): Params<MediaType>
   getUrl(): string
-  entity(value: ReturnEntity<MediaType>): ItunesSearchClient<MediaType>
-  attribute(value: ReturnAttribute<MediaType>): ItunesSearchClient<MediaType>
+  entity(value: Entity[MediaType]): ItunesSearchClient<MediaType>
+  attribute(value: Attribute[MediaType]): ItunesSearchClient<MediaType>
   limit(value: number): ItunesSearchClient<MediaType>
   send(options?: Request): Promise<Response>
 }
 
-class Client<MediaType> implements ItunesSearchClient<MediaType> {
+class Client<MediaType extends Media> implements ItunesSearchClient<MediaType> {
   private params: Params<MediaType>
 
   constructor(params: Params<MediaType>) {
@@ -138,11 +112,11 @@ class Client<MediaType> implements ItunesSearchClient<MediaType> {
     return `${BASE_PATH}?${queries}`
   }
 
-  entity = (value: ReturnEntity<MediaType>) => {
+  entity = (value: Entity[MediaType]) => {
     return this.create('entity', value)
   }
 
-  attribute = (value: ReturnAttribute<MediaType>) => {
+  attribute = (value: Attribute[MediaType]) => {
     return this.create('attribute', value)
   }
 
@@ -189,3 +163,5 @@ class ItunesSearch {
 export default function itunesSearch(term: string, options: Options = {}): ItunesSearch {
   return new ItunesSearch(term, options)
 }
+
+export { itunesSearch as isc }
