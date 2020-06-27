@@ -1,6 +1,6 @@
 {
   "name": "itunes-search-client",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "client for itunse search api.",
   "main": "lib/bundle.common.js",
   "module": "lib/bundle.module.js",
