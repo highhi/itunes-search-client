@@ -1,10 +1,8 @@
 import { enableFetchMocks } from 'jest-fetch-mock'
 import { assert, IsExact } from 'conditional-type-checks'
-import isc, { Entity, Attribute } from '../src'
+import { Entity, Attribute, isc } from '../src'
 
 enableFetchMocks()
-
-isc('foo').media('movie').entity('movieArtist')
 
 describe('itunes-search-client', () => {
   describe('#getUrl', () => {
@@ -148,8 +146,9 @@ describe('itunes-search-client', () => {
     test('when the media is software', () => {
       const client = isc('foo').media('ebook')
       type E = (value: Entity['ebook']) => any
+      type A = (value: never) => any
       assert<IsExact<typeof client.entity, E>>(true)
-      // ebook attribute does not exist
+      assert<IsExact<typeof client.attribute, A>>(true)
     })
 
     test('when the media is all', () => {
