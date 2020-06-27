@@ -1,5 +1,3 @@
-import qs from 'qs'
-
 const BASE_PATH = 'https://itunes.apple.com/search'
 
 export type Media = 'movie' | 'music' | 'podcast' | 'musicVideo' | 'audiobook' | 'shortFilm' | 'tvShow' | 'software' | 'ebook' | 'all'
@@ -66,38 +64,12 @@ export type Attribute = {
     | 'showTerm'
     | 'movieTerm'
     | 'albumTerm'
+  ebook: never
 }
 
-/* eslint-disable */
-export type ReturnEntity<MediaType> =
-  MediaType extends 'movie' ? Entity['movie'] :
-  MediaType extends 'podcast' ? Entity['podcast'] :
-  MediaType extends 'music' ? Entity['music'] :
-  MediaType extends 'musicVideo' ? Entity['musicVideo'] :
-  MediaType extends 'audiobook' ? Entity['audiobook'] :
-  MediaType extends 'shortFilm' ? Entity['shortFilm'] :
-  MediaType extends 'tvShow' ? Entity['tvShow'] :
-  MediaType extends 'software' ? Entity['software'] :
-  MediaType extends 'ebook' ? Entity['ebook'] :
-  MediaType extends 'all' ? Entity['all'] :
-  never
-
-export type ReturnAttribute<MediaType> =
-  MediaType extends 'movie' ? Attribute['movie'] :
-  MediaType extends 'podcast' ? Attribute['podcast'] :
-  MediaType extends 'music' ? Attribute['music'] :
-  MediaType extends 'musicVideo' ? Attribute['musicVideo'] :
-  MediaType extends 'audiobook' ? Attribute['audiobook'] :
-  MediaType extends 'shortFilm' ? Attribute['shortFilm'] :
-  MediaType extends 'tvShow' ? Attribute['tvShow'] :
-  MediaType extends 'software' ? Attribute['software'] :
-  MediaType extends 'all' ? Attribute['all'] :
-  never
-/* eslint-enable */
-
-export type Params<MediaType> = {
-  entity?: ReturnEntity<MediaType>
-  attribute?: ReturnAttribute<MediaType>
+export type Params<MediaType extends Media> = {
+  entity?: Entity[MediaType]
+  attribute?: Attribute[MediaType]
   media: Media
   limit: number
   term: string
@@ -105,16 +77,26 @@ export type Params<MediaType> = {
   country: string
 }
 
-export type ItunesSearchClient<MediaType> = {
+function qs(params: { [key: string]: any }): string {
+  return Object.keys(params)
+    .map((key) => {
+      const enkey = encodeURIComponent(key)
+      const envalue = encodeURIComponent(params[key])
+      return `${enkey}=${envalue}`
+    })
+    .join('&')
+}
+
+export type ItunesSearchClient<MediaType extends Media> = {
   getParams(): Params<MediaType>
   getUrl(): string
-  entity(value: ReturnEntity<MediaType>): ItunesSearchClient<MediaType>
-  attribute(value: ReturnAttribute<MediaType>): ItunesSearchClient<MediaType>
+  entity(value: Entity[MediaType]): ItunesSearchClient<MediaType>
+  attribute(value: Attribute[MediaType]): ItunesSearchClient<MediaType>
   limit(value: number): ItunesSearchClient<MediaType>
   send(options?: Request): Promise<Response>
 }
 
-class Client<MediaType> implements ItunesSearchClient<MediaType> {
+class Client<MediaType extends Media> implements ItunesSearchClient<MediaType> {
   private params: Params<MediaType>
 
   constructor(params: Params<MediaType>) {
@@ -126,15 +108,15 @@ class Client<MediaType> implements ItunesSearchClient<MediaType> {
   }
 
   getUrl = () => {
-    const queries = qs.stringify(this.params)
+    const queries = qs(this.params)
     return `${BASE_PATH}?${queries}`
   }
 
-  entity = (value: ReturnEntity<MediaType>) => {
+  entity = (value: Entity[MediaType]) => {
     return this.create('entity', value)
   }
 
-  attribute = (value: ReturnAttribute<MediaType>) => {
+  attribute = (value: Attribute[MediaType]) => {
     return this.create('attribute', value)
   }
 
@@ -157,17 +139,29 @@ type Options = {
   country?: string
 }
 
-export default function itunesSearch(term: string, options: Options = {}) {
-  return {
-    media<M extends Media>(value: M): ItunesSearchClient<M> {
-      const params: Params<M> = Object.create(null)
-      params['term'] = term
-      params['media'] = value
-      params['limit'] = options.limit || 10
-      params['lang'] = options.lang || 'en_us'
-      params['country'] = options.country || 'us'
+class ItunesSearch {
+  private term = ''
+  private options: Options = {}
 
-      return new Client(params)
-    },
+  constructor(term: string, options: Options = {}) {
+    this.term = term
+    this.options = options
+  }
+
+  media = <M extends Media>(value: M): ItunesSearchClient<M> => {
+    const params: Params<M> = Object.create(null)
+    params['term'] = this.term
+    params['media'] = value
+    params['limit'] = this.options.limit || 10
+    params['lang'] = this.options.lang || 'en_us'
+    params['country'] = this.options.country || 'us'
+
+    return new Client(params)
   }
 }
+
+export default function itunesSearch(term: string, options: Options = {}): ItunesSearch {
+  return new ItunesSearch(term, options)
+}
+
+export { itunesSearch as isc }

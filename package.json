@@ -1,13 +1,15 @@
 {
   "name": "itunes-search-client",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "client for itunse search api.",
-  "main": "lib/index.js",
+  "main": "lib/bundle.common.js",
+  "module": "lib/bundle.module.js",
   "author": "highhi",
   "license": "MIT",
   "repository": "highhi/itunes-search-client",
   "homepage": "https://github.com/highhi/itunes-search-client",
   "types": "lib/index.d.ts",
+  "sideEffects": false,
   "keywords": [
     "itunes search api",
     "api",
@@ -15,28 +17,31 @@
   ],
   "scripts": {
     "start": "tsc -w",
-    "build": "tsc",
+    "build": "rollup -c",
     "prepublish": "npm run --if-present build",
     "test": "jest",
     "lint": "eslint --fix ./src/**/*.ts"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.6",
-    "@types/node": "^11.9.4",
-    "@types/qs": "^6.5.1",
-    "@typescript-eslint/eslint-plugin": "^1.4.0",
-    "@typescript-eslint/parser": "^1.4.0",
+    "@rollup/plugin-commonjs": "^13.0.0",
+    "@rollup/plugin-node-resolve": "^8.0.1",
+    "@types/jest": "^26.0.0",
+    "@types/node": "^14.0.13",
+    "@typescript-eslint/eslint-plugin": "^3.3.0",
+    "@typescript-eslint/parser": "^3.3.0",
     "conditional-type-checks": "^1.0.0",
-    "eslint": "^5.14.1",
-    "eslint-config-prettier": "^4.0.0",
+    "eslint": "^7.3.0",
+    "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.0.1",
     "isomorphic-unfetch": "^3.0.0",
-    "jest": "^24.1.0",
-    "prettier": "^1.16.4",
-    "ts-jest": "^24.0.0",
+    "jest": "^26.0.1",
+    "jest-fetch-mock": "^3.0.3",
+    "prettier": "^2.0.5",
+    "rollup": "^2.17.1",
+    "rollup-plugin-terser": "^6.1.0",
+    "rollup-plugin-typescript2": "^0.27.1",
+    "ts-jest": "^26.1.0",
     "typescript": "^3.3.3"
   },
-  "dependencies": {
-    "qs": "^6.6.0"
-  }
+  "dependencies": {}
 }
